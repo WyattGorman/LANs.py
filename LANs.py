@@ -213,7 +213,7 @@ class Parser():
 					return
 
 			# -O saves it to ~body in working dir, to speed it up -4 means only use IPv4 and --no-dns-cache speeds it up a little more
-			wget = Popen(['/usr/bin/wget', '-O', '/tmp/~body', '--no-dns-cache', '-4', '-U', self.user_agent, self.html_url], stdout=PIPE, stderr=DN)
+			wget = Popen(['wget', '-O', '/tmp/~body', '--no-dns-cache', '-4', '-U', self.user_agent, self.html_url], stdout=PIPE, stderr=DN)
 			wget.wait()
 			f = open('/tmp/~body', 'r')
 			body = f.read()
@@ -722,7 +722,7 @@ class active_users():
 				self.current_time = time.time()
 			if self.current_time > self.start_time+1:
 				self.IPandMAC.sort(key=lambda x: float(x[2]), reverse=True) # sort by data packets
-				os.system('/usr/bin/clear')
+				os.system('clear')
 				print '    IP	        Data'
 				for x in self.IPandMAC:
 					if len(x) == 3:
@@ -742,7 +742,7 @@ class active_users():
 		iplist = []
 		maclist = []
 		try:
-			nmap = Popen(['/usr/bin/nmap', '-sn', '192.168.1.*'], stdout=PIPE, stderr=DN)
+			nmap = Popen(['nmap', '-e', interface, '-sn', '192.168.1.*'], stdout=PIPE, stderr=DN)
 			nmap = nmap.communicate()[0]
 			nmap = nmap.splitlines()[2:-1]
 		except:
@@ -799,8 +799,8 @@ class active_users():
 		# Start monitor mode
 		print '[*] Enabling monitor mode'
 		try:
-			print '/usr/sbin/airmon-ng ' + 'start ' + '%s ' + interface
-			promiscSearch = Popen(['/usr/sbin/airmon-ng', 'start', '%s' % interface], stdout=PIPE, stderr=DN)
+			print 'airmon-ng ' + 'start ' + '%s ' + interface
+			promiscSearch = Popen(['airmon-ng', 'start', '%s' % interface], stdout=PIPE, stderr=DN)
 			promisc = promiscSearch.communicate()[0]
 			monmodeSearch = re.search('monitor mode enabled on (.+)\)', promisc)
 			self.monmode = monmodeSearch.group(1)
@@ -909,7 +909,7 @@ def main():
 		exit("\nPlease run as root\n")
 
 	#Find the gateway and interface
-	ipr = Popen(['/sbin/ip', 'route'], stdout=PIPE, stderr=DN)
+	ipr = Popen(['ip', 'route'], stdout=PIPE, stderr=DN)
 	ipr = ipr.communicate()[0]
 	iprs = ipr.split('\n')
 	for route in range(1,len(iprs)):
@@ -984,7 +984,7 @@ def main():
 		except:
 			try:
 				print "[-] Router did not respond to ARP request for MAC, attempting to pull the MAC from the ARP cache"
-				arpcache = Popen(['/usr/sbin/arp', '-n'], stdout=PIPE, stderr=DN)
+				arpcache = Popen(['arp', '-n'], stdout=PIPE, stderr=DN)
 				split_lines = arpcache.communicate()[0].splitlines()
 				print split_lines[1],'\n'
 				arpoutput = split_lines[1].split()
@@ -1022,7 +1022,7 @@ def main():
 	if args.nmap:
 		print "\n[*] Running [nmap -T4 -O "+victimIP+"]"
 		try:
-			nmap = Popen(['/usr/bin/nmap', '-T4', '-O', '-e', interface, victimIP], stdout=PIPE, stderr=DN)
+			nmap = Popen(['nmap', '-T4', '-O', '-e', interface, victimIP], stdout=PIPE, stderr=DN)
 			nmap = nmap.communicate()[0].splitlines()
 			for x in nmap:
 				if x != '':
@@ -1059,3 +1059,4 @@ def main():
 
 if __name__ == "__main__":
 	main()
+
